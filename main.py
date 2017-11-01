@@ -18,6 +18,7 @@ if x == 1:
 
 elif x == 2:
 	try:
+		icmp.validate()
 		icmp.port_identification()
 	except FileNotFoundError:
 		print("no icmp.dat file")

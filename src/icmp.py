@@ -37,14 +37,11 @@ def port_identification():
 	ip_list = list()
 	port_list = list()
 
-	test = list()
-
-
 
 	for ips in open("icmp.dat", "r").readlines():
 		lst.append(ips.strip())
 
-	print(lst)
+	# print(lst)
 	
 
 	# Validation of the IP adresses.
@@ -107,4 +104,29 @@ def port_identification():
 		f.close()
 	except IndexError:
 		print("Something happened ... ,____,")
+
+
+def validate(name='icmp.dat'):
+	lst = list()
+	validated_ips = list()
+
+	for ips in open(name, "r").readlines():
+		lst.append(ips)
+
+	for ip in lst: # some bs
+		print(type(ip))
+		packet = IP(dst=ip, ttl=20)/ICMP()
+		reply = sr1(packet, timeout=TIMEOUT)
+		if not (reply is None):
+			validated_ips.append(reply.src)
+			print(reply.src)
+	
+	print(validated_ips)
+			
+	os.remove("icmp.dat")
+
+	# f = open("icmp.dat", "w+")
+	# for i in lst:
+	# 	f.write(i)
+	# f.close()
 
