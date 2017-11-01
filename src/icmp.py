@@ -7,7 +7,7 @@ TIMEOUT = 2
 conf.verb = 0
 
 
-def ICMPping(ip1='192.168.1.1', ip2='192.168.1.255'):
+def icmp_ping(ip1='192.168.1.1', ip2='192.168.1.255'):
 	try:
 		i1 = ip1.split(".")
 		i2 = ip2.split(".")
@@ -17,6 +17,9 @@ def ICMPping(ip1='192.168.1.1', ip2='192.168.1.255'):
 			packet = IP(dst=ip_o + str(ip), ttl=20)/ICMP()
 			reply = sr1(packet, timeout=TIMEOUT)
 			if not (reply is None):
+				f = open('icmp.dat', 'a')
+				f.write(reply.src + ' ')
+				f.close()
 				x = reply.src + " is online"
 				print(x)
 			else:
@@ -27,4 +30,3 @@ def ICMPping(ip1='192.168.1.1', ip2='192.168.1.255'):
 	
 
 
-# ICMPping()
