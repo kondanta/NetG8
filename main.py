@@ -15,3 +15,11 @@ if x == 1:
 		icmp.icmp_ping(ip, ip2)
 	except IndexError:
 		icmp.icmp_ping()
+
+elif x == 2:
+	try:
+		icmp.port_identification()
+	except FileNotFoundError:
+		print("no icmp.dat file")
+		icmp.icmp_ping()
+		icmp.port_identification()

@@ -1,7 +1,7 @@
 from scapy.all import *
-import socket
 import os
 import re
+import socket
 
 
 conf.L3socket = L3RawSocket
@@ -10,7 +10,7 @@ TIMEOUT = 2
 conf.verb = 0
 
 
-def icmp_ping(ip1='192.168.1.1', ip2='192.168.1.255'):
+def icmp_ping(ip1='192.168.160.70', ip2='192.168.160.74'):
 	try:
 		i1 = ip1.split(".")
 		i2 = ip2.split(".")
@@ -41,29 +41,33 @@ def port_identification():
 
 
 
-	for ips in open("../icmp.dat", "r").readlines():
+	for ips in open("icmp.dat", "r").readlines():
 		lst.append(ips.strip())
+
+	print(lst)
+	
 
 	# Validation of the IP adresses.
 	for ip in lst:
 		try:
-			# regexp: [0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$
 			socket.inet_aton(ip) # legal. But need to check if the ip is alive !
+
+			def get_nmap(options='-F', ip=ip):
+				command = "nmap " + options + " " + "-oG" + " " + "-" + " " + ip
+				process = os.popen(command)
+				return str(process.read())
+
+			# regexp: [0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$
+			a = get_nmap('-F' , ip)
+			a = a.replace("\n", "")
 		except Exception as e: # illegal
-			print("Due to the illegal Ip existence, program is exiting. Please check out the ip addresses\
-				in the 'icmp.dat' file.")
+			# print("Due to the illegal Ip existence, program is exiting. Please check out the ip addresses\
+				# in the 'icmp.dat' file.")
+			print(e)
 			return
-	
 
-	# Prepearing the nmap
-	def get_nmap(options='-F', ip=ip):
-		command = "nmap " + options + " " + "-oG" + " " + "-" + " " + ip
-		process = os.popen(command)
-		return str(process.read())
-
-
-	a = get_nmap('-F' , 'scanme.nmap.org')
-	a = a.replace("\n", "")
+	# a = get_nmap('-F' , 'scanme.nmap.org')
+	# a = a.replace("\n", "")
 
 	file = open("nmap_parse.dat", 'w+')
 	file.write(a)
@@ -74,8 +78,11 @@ def port_identification():
 	
 	for line in open('nmap_parse.dat'):
 		ip_list = (prt.findall(line))
-	
-	ip_list = ip_list[0].split(",")
+
+	try:
+		ip_list = ip_list[0].split(",")
+	except IndexError:
+		print("I could not find any ports... ,__,")
 
 	for item in ip_list:
 		item = item.replace('/'," ")
@@ -86,15 +93,18 @@ def port_identification():
 		item = item.split()
 		port_list[index] = item
 
-	# print(port_list)
 
-	# for iteml, itemp in lst, port_list:
-	# 	item = item + port_list
-	# 	test.append(item)
+	try:
+		f = open('test.dat', 'w')
+		cnt = 0
+		for i in port_list:
+			f.write(lst[cnt]+" ")
+			for j in i:
+				f.write(j+" ")
+			cnt += 1
+			f.write('\n')
 
-	wr = [j for i in zip(lst,port_list) for j in i]
+		f.close()
+	except IndexError:
+		print("Something happened ... ,____,")
 
-	print(flat)
-
-
-port_identification()
