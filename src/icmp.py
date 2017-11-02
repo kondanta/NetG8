@@ -55,8 +55,10 @@ def port_identification():
 				return str(process.read())
 
 			# regexp: [0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$
-			a = get_nmap('-p- -sT -sU' , ip)
+			a = get_nmap('-O', ip)
 			a = a.replace("\n", "")
+			file = open("nmap_parse.dat", 'a+')
+			file.write(a)
 		except Exception as e: # illegal
 			# print("Due to the illegal Ip existence, program is exiting. Please check out the ip addresses\
 				# in the 'icmp.dat' file.")
@@ -66,12 +68,11 @@ def port_identification():
 	# a = get_nmap('-sT' , '192.168.171.22')
 	# a = a.replace("\n", "")
 
-	file = open("nmap_parse.dat", 'w+')
-	file.write(a)
 	file.close()
 
 	# Regex....
 	prt = re.compile(r'(?:.*Ports:\s)(.*)(?:\S\t)(?:Ignored.*)')
+	# prt = re.compile(r'(?:.*Ports:\s)(.*)(:?Nmap.*)')
 	
 	for line in open('nmap_parse.dat'):
 		ip_list = (prt.findall(line))
@@ -98,7 +99,7 @@ def port_identification():
 			f.write(lst[cnt]+" ")
 			for j in i:
 				f.write(j+" ") # what if 4 ports are open ?
-			# cnt += 1
+			cnt += 1
 			f.write('\n')
 
 		f.close()
