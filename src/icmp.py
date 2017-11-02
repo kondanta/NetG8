@@ -121,12 +121,14 @@ def validate(name='icmp.dat'):
 			validated_ips.append(reply.src)
 			print(reply.src)
 	
-	print(validated_ips)
-			
 	os.remove("icmp.dat")
 
-	# f = open("icmp.dat", "w+")
-	# for i in lst:
-	# 	f.write(i)
-	# f.close()
+	print(validated_ips)
+			
+
+	f = open("icmp.dat", "w")
+	for i in validated_ips:
+		print(i)
+		f.write(i + '\n')
+	f.close()
 
