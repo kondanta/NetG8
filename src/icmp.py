@@ -36,7 +36,7 @@ def port_identification():
 	lst = list()
 	ip_list = list()
 	port_list = list()
-
+	a = ''
 
 	for ips in open("icmp.dat", "r").readlines():
 		lst.append(ips.strip())
@@ -55,7 +55,7 @@ def port_identification():
 				return str(process.read())
 
 			# regexp: [0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$
-			a = get_nmap('-F' , ip)
+			a = get_nmap('-p- -sT -sU' , ip)
 			a = a.replace("\n", "")
 		except Exception as e: # illegal
 			# print("Due to the illegal Ip existence, program is exiting. Please check out the ip addresses\
@@ -63,7 +63,7 @@ def port_identification():
 			print(e)
 			return
 
-	# a = get_nmap('-F' , 'scanme.nmap.org')
+	# a = get_nmap('-sT' , '192.168.171.22')
 	# a = a.replace("\n", "")
 
 	file = open("nmap_parse.dat", 'w+')
@@ -97,8 +97,8 @@ def port_identification():
 		for i in port_list:
 			f.write(lst[cnt]+" ")
 			for j in i:
-				f.write(j+" ")
-			cnt += 1
+				f.write(j+" ") # what if 4 ports are open ?
+			# cnt += 1
 			f.write('\n')
 
 		f.close()
@@ -111,21 +111,18 @@ def validate(name='icmp.dat'):
 	validated_ips = list()
 
 	for ips in open(name, "r").readlines():
-		lst.append(ips)
+		lst.append(ips.strip())
 
+
+	print(lst)
 	for ip in lst: # some bs
-		print(type(ip))
 		packet = IP(dst=ip, ttl=20)/ICMP()
 		reply = sr1(packet, timeout=TIMEOUT)
 		if not (reply is None):
 			validated_ips.append(reply.src)
-			print(reply.src)
 	
 	os.remove("icmp.dat")
-
-	print(validated_ips)
 			
-
 	f = open("icmp.dat", "w")
 	for i in validated_ips:
 		print(i)
