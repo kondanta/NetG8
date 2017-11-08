@@ -1,7 +1,6 @@
 from scapy.all import *
 import os
 import re
-import socket
 
 
 conf.L3socket = L3RawSocket
@@ -10,7 +9,11 @@ TIMEOUT = 2
 conf.verb = 0
 
 
-def icmp_ping(ip1='192.168.160.70', ip2='192.168.160.74'):
+
+def icmp_ping(ip1='192.168.1.1', ip2='192.168.1.255'):
+	"""
+	Takes two IP addresses as a paramters to find pinging range.
+	"""
 	try:
 		i1 = ip1.split(".")
 		i2 = ip2.split(".")
@@ -33,81 +36,78 @@ def icmp_ping(ip1='192.168.160.70', ip2='192.168.160.74'):
 	
 
 def port_identification():
+	"""
+	Uses nmap to scan alive hosts ports.
+	For ip's icmp.dat file is required.
+	"""
+	
 	lst = list()
 	ip_list = list()
 	port_list = list()
-	a = ''
+	scan_result = ''
 
 	for ips in open("icmp.dat", "r").readlines():
 		lst.append(ips.strip())
 
-	# print(lst)
-	
-
-	# Validation of the IP adresses.
 	for ip in lst:
 		try:
-			socket.inet_aton(ip) # legal. But need to check if the ip is alive !
-
-			def get_nmap(options='-F', ip=ip):
-				command = "nmap " + options + " " + "-oG" + " " + "-" + " " + ip
+			# function that returns to the result of nmap scan.
+			def get_nmap(ip=ip):
+				# default nmap scan for open ports!
+				command = "nmap " + "-oG" + " " + "-" + " " + ip
 				process = os.popen(command)
 				return str(process.read())
 
-			# regexp: [0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$
-			a = get_nmap('-O', ip)
-			a = a.replace("\n", "")
-			file = open("nmap_parse.dat", 'a+')
-			file.write(a)
-		except Exception as e: # illegal
-			# print("Due to the illegal Ip existence, program is exiting. Please check out the ip addresses\
-				# in the 'icmp.dat' file.")
-			print(e)
-			return
+			scan_result = get_nmap(ip)
+			scan_result = scan_result.replace("\n", "")
 
-	# a = get_nmap('-sT' , '192.168.171.22')
-	# a = a.replace("\n", "")
+			prt = re.compile(r'(?:.*Ports:\s)(.*)(?:\S\t)(?:Ignored.*)')
+			
 
-	file.close()
+			ip_list = (prt.findall(scan_result))
 
-	# Regex....
-	prt = re.compile(r'(?:.*Ports:\s)(.*)(?:\S\t)(?:Ignored.*)')
-	# prt = re.compile(r'(?:.*Ports:\s)(.*)(:?Nmap.*)')
-	
-	for line in open('nmap_parse.dat'):
-		ip_list = (prt.findall(line))
+
+			for item in ip_list:
+				item = item.replace('/'," ")
+				port_list.append(item)
+
+			for index, item in enumerate(port_list):
+				port_list[index] = item
+
+		except Exception as e:
+			print("Error: %s" % e)
+			pass
+		
 
 	try:
-		ip_list = ip_list[0].split(",")
-	except IndexError:
-		print("I could not find any ports... ,__,")
-
-	for item in ip_list:
-		item = item.replace('/'," ")
-		port_list.append(item)
-
-
-	for index, item in enumerate(port_list):
-		item = item.split()
-		port_list[index] = item
-
-
-	try:
-		f = open('test.dat', 'w')
+		"""
+		It will write the ports.dat file as follows:
+		Host's Ip address, Port number, Port Status[open, restricted], type[tcp/udp], service-name
+		"""
+		# FIXME: It doesnt write the IPs that has no OpenPorts.
+		f = open('ports.dat', 'a')
 		cnt = 0
-		for i in port_list:
-			f.write(lst[cnt]+" ")
-			for j in i:
-				f.write(j+" ") # what if 4 ports are open ?
+		while cnt != len(lst):
+			f.write(lst[cnt]+", ")
 			cnt += 1
+			for i in port_list:
+				f.write(lst[cnt]+", ")
+				for j in i:
+					if j is None:
+						f.write("None")
+					f.write(j) # what if 4 ports are open ?
 			f.write('\n')
 
 		f.close()
-	except IndexError:
-		print("Something happened ... ,____,")
+		print("ports.dat is created!\n")
+	except Exception as e:
+		print("Error: %s " % e)
 
 
 def validate(name='icmp.dat'):
+	"""
+	Checks the IPs in the given @name file are alive.
+	"""
 	lst = list()
 	validated_ips = list()
 
@@ -115,7 +115,6 @@ def validate(name='icmp.dat'):
 		lst.append(ips.strip())
 
 
-	print(lst)
 	for ip in lst: # some bs
 		packet = IP(dst=ip, ttl=20)/ICMP()
 		reply = sr1(packet, timeout=TIMEOUT)
