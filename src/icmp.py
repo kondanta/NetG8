@@ -52,7 +52,7 @@ def port_identification():
 			scan_result = get_nmap(ip, "-d -d ")
 			scan_result = scan_result.replace("\n", "")
 
-			prt = re.compile(r'(?:.*Ports:\s)(.*)(?!;)')
+			prt = re.compile(r'(?:.*Ports:\s)(.*)#.*')
 			ip_list = (prt.findall(scan_result))
 			print(ip_list)
 			# if regex returns nothing, We have no ports available/open.
@@ -136,11 +136,11 @@ def open_port_identification():
 		# FIXME: It doesnt write the IPs that has no OpenPorts.
 		f = open('open_ports.dat', 'a')
 		ctr = 0
+		print(port_list)
 		for i in port_list:
 			if i == "None":
 				continue
 			else:
-				print(ip_table[ctr]+",")
 				f.write(ip_table[ctr]+" ,")
 				f.write(i) 
 				ctr += 1
