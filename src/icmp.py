@@ -43,7 +43,6 @@ def port_identification():
 	lst = list()
 	ip_list = list()
 	port_list = list()
-	scan_result = ''
 
 	for ips in open("icmp.dat", "r").readlines():
 		lst.append(ips.strip())
@@ -94,32 +93,58 @@ def port_identification():
 		print("File Writing Error: %s " % e)
 
 
-def validate(name='icmp.dat'):
-	"""
-	Checks the IPs in the given @name file are alive.
-	"""
+def open_port_identification():
 	lst = list()
-	validated_ips = list()
+	ip_list = list()
+	port_list = list()
 
-	# If icmp.dat file has nothing to pass, we should first collect to IPs.
-	if os.stat(name).st_size == 0:
-		print("No IPs found in 'icmp.dat'. [*] Returning to the Main Menu!")
-		return
-
-	for ips in open(name, "r").readlines():
+	for ips in open("ports.dat", "r").readlines():
 		lst.append(ips.strip())
 
-	for ip in lst: # some bs
-		packet = IP(dst=ip, ttl=20)/ICMP()
-		reply = sr1(packet, timeout=TIMEOUT)
-		if not (reply is None):
-			validated_ips.append(reply.src)
-	
-	os.remove("icmp.dat") 
-			
-	f = open("icmp.dat", "w")
-	for i in validated_ips:
-		print(i)  # should we continue to print online ip's on console ?
-		f.write(i + '\n')
-	f.close()
+	for item in lst:
+		item = item.split(",")
+		ip_list.append(item[0])
+
+	for ip in ip_list:
+		try:
+			scan_result = get_nmap(ip)
+			scan_result = scan_result.replace("\n", "")
+
+			prt = re.compile(r'(?:.*Ports:\s)(.*)(?:\S\t)(?:Ignored.*)')
+			ip_list = (prt.findall(scan_result))
+			# if regex returns nothing, We have no ports available/open.
+			if not ip_list:
+				ip_list = ["None"]
+
+			for item in ip_list:
+				item = item.replace('/'," ")
+				port_list.append(item)
+
+			for index, item in enumerate(port_list):
+				port_list[index] = item
+				print(port_list)
+
+		except Exception as e:
+			print("Port Managing Error: %s" % e)
+			pass
+
+	try:
+		"""
+		It will write the ports.dat file as follows:
+		Host's Ip address, Port number, Port Status[open, restricted], type[tcp/udp], service-name
+		"""
+		# FIXME: It doesnt write the IPs that has no OpenPorts.
+		f = open('open_ports.dat', 'a')
+		
+		for i in port_list:
+			if i == "None":
+				continue
+			else:
+				f.write(i) 
+			f.write('\n')
+
+		f.close()
+		print("[*] OpenPorts.dat is created!\n")
+	except Exception as e:
+		print("File Writing Error: %s " % e)
 
