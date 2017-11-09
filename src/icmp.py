@@ -1,10 +1,10 @@
 from scapy.all import *
+from src.utils import get_nmap
 import os
 import re
 
 
 conf.L3socket = L3RawSocket
-
 TIMEOUT = 2
 conf.verb = 0
 
@@ -40,7 +40,6 @@ def port_identification():
 	Uses nmap to scan alive hosts ports.
 	For ip's icmp.dat file is required.
 	"""
-	
 	lst = list()
 	ip_list = list()
 	port_list = list()
@@ -51,21 +50,14 @@ def port_identification():
 
 	for ip in lst:
 		try:
-			# function that returns to the result of nmap scan.
-			def get_nmap(ip=ip):
-				# default nmap scan for open ports!
-				command = "nmap " + "-oG" + " " + "-" + " " + ip
-				process = os.popen(command)
-				return str(process.read())
-
 			scan_result = get_nmap(ip)
 			scan_result = scan_result.replace("\n", "")
 
 			prt = re.compile(r'(?:.*Ports:\s)(.*)(?:\S\t)(?:Ignored.*)')
-			
-
 			ip_list = (prt.findall(scan_result))
-
+			# if regex returns nothing, We have no ports available/open.
+			if not ip_list:
+				ip_list = ["None"]
 
 			for item in ip_list:
 				item = item.replace('/'," ")
@@ -75,10 +67,9 @@ def port_identification():
 				port_list[index] = item
 
 		except Exception as e:
-			print("Error: %s" % e)
+			print("Port Managing Error: %s" % e)
 			pass
 		
-
 	try:
 		"""
 		It will write the ports.dat file as follows:
@@ -87,21 +78,20 @@ def port_identification():
 		# FIXME: It doesnt write the IPs that has no OpenPorts.
 		f = open('ports.dat', 'a')
 		cnt = 0
-		while cnt != len(lst):
+		
+		for i in port_list:
 			f.write(lst[cnt]+", ")
+			for j in i:
+				if j is None:
+					f.write("None")
+				f.write(j) 
 			cnt += 1
-			for i in port_list:
-				f.write(lst[cnt]+", ")
-				for j in i:
-					if j is None:
-						f.write("None")
-					f.write(j) # what if 4 ports are open ?
 			f.write('\n')
 
 		f.close()
-		print("ports.dat is created!\n")
+		print("[*] Ports.dat is created!\n")
 	except Exception as e:
-		print("Error: %s " % e)
+		print("File Writing Error: %s " % e)
 
 
 def validate(name='icmp.dat'):
@@ -111,9 +101,13 @@ def validate(name='icmp.dat'):
 	lst = list()
 	validated_ips = list()
 
+	# If icmp.dat file has nothing to pass, we should first collect to IPs.
+	if os.stat(name).st_size == 0:
+		print("No IPs found in 'icmp.dat'. [*] Returning to the Main Menu!")
+		return
+
 	for ips in open(name, "r").readlines():
 		lst.append(ips.strip())
-
 
 	for ip in lst: # some bs
 		packet = IP(dst=ip, ttl=20)/ICMP()
@@ -121,11 +115,11 @@ def validate(name='icmp.dat'):
 		if not (reply is None):
 			validated_ips.append(reply.src)
 	
-	os.remove("icmp.dat")
+	os.remove("icmp.dat") 
 			
 	f = open("icmp.dat", "w")
 	for i in validated_ips:
-		print(i)
+		print(i)  # should we continue to print online ip's on console ?
 		f.write(i + '\n')
 	f.close()
 

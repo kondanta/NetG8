@@ -1,3 +1,6 @@
+import sys
+if sys.version_info[0] < 3:
+	raise SystemError("Please run this program with Python 3!")
 import src.icmp as icmp
 
 menu = """
