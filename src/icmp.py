@@ -49,11 +49,12 @@ def port_identification():
 
 	for ip in lst:
 		try:
-			scan_result = get_nmap(ip)
+			scan_result = get_nmap(ip, "-d -d ")
 			scan_result = scan_result.replace("\n", "")
 
-			prt = re.compile(r'(?:.*Ports:\s)(.*)(?:\S\t)(?:Ignored.*)')
+			prt = re.compile(r'(?:.*Ports:\s)(.*)(?!;)')
 			ip_list = (prt.findall(scan_result))
+			print(ip_list)
 			# if regex returns nothing, We have no ports available/open.
 			if not ip_list:
 				ip_list = ["None"]
@@ -80,10 +81,8 @@ def port_identification():
 		
 		for i in port_list:
 			f.write(lst[cnt]+", ")
-			for j in i:
-				if j is None:
-					f.write("None")
-				f.write(j) 
+			# for j in i:
+			f.write(i) 
 			cnt += 1
 			f.write('\n')
 
@@ -96,6 +95,7 @@ def port_identification():
 def open_port_identification():
 	lst = list()
 	ip_list = list()
+	ip_table = list()
 	port_list = list()
 
 	for ips in open("ports.dat", "r").readlines():
@@ -104,7 +104,9 @@ def open_port_identification():
 	for item in lst:
 		item = item.split(",")
 		ip_list.append(item[0])
+		ip_table.append(item[0])
 
+	print(ip_list)
 	for ip in ip_list:
 		try:
 			scan_result = get_nmap(ip)
@@ -122,12 +124,10 @@ def open_port_identification():
 
 			for index, item in enumerate(port_list):
 				port_list[index] = item
-				print(port_list)
 
 		except Exception as e:
 			print("Port Managing Error: %s" % e)
 			pass
-
 	try:
 		"""
 		It will write the ports.dat file as follows:
@@ -135,12 +135,15 @@ def open_port_identification():
 		"""
 		# FIXME: It doesnt write the IPs that has no OpenPorts.
 		f = open('open_ports.dat', 'a')
-		
+		ctr = 0
 		for i in port_list:
 			if i == "None":
 				continue
 			else:
+				print(ip_table[ctr]+",")
+				f.write(ip_table[ctr]+" ,")
 				f.write(i) 
+				ctr += 1
 			f.write('\n')
 
 		f.close()
@@ -148,3 +151,4 @@ def open_port_identification():
 	except Exception as e:
 		print("File Writing Error: %s " % e)
 
+  

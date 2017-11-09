@@ -9,7 +9,7 @@ conf.verb = 0
 
 def get_nmap(ip, option=''):
 	# default nmap scan for open ports!
-	command = "nmap " + "-oG" + " " + "-" + " " + ip
+	command = "nmap " + option + " -oG" + " " + "-" + " " + ip
 	process = os.popen(command)
 	return str(process.read())
 
