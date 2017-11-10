@@ -76,7 +76,7 @@ def open_port_identification():
 	ip_table = list()
 	nm = nmap.PortScanner()
 
-	for ips in open("open_ports.dat", "r").readlines():
+	for ips in open("ports.dat", "r").readlines():
 		lst.append(ips.strip())
  	
  	# Separating the ips.
@@ -103,4 +103,50 @@ def open_port_identification():
 			cnt += 1
 		f.write('\n')
 		f.close()
+
+def os_ident():
+
+	lst = list()
+	ip_table = list()
+	os_list = list()
+
+	nm = nmap.PortScanner()
+	cnt = 0
+
+	for ips in open("open_ports.dat", "r").readlines():
+		lst.append(ips.strip())
+
+	for item in lst:
+		item = item.split(",")
+		ip_table.append(item[0])
+
+	print(ip_table)
+
+	try:
+
+		for ip in ip_table:
+
+			nm.scan(ip, arguments="-O")
+
+			a = nm[ip]['osmatch']
+			b = a[0]['name']
+			print(b)
+			os_list.append(b)
+
+		print(os_list)
+
+	except IndexError:
+		print("Couldn't able to find the OS. Please check the open ports and ips.")
+
+	f = open('denfin.dat', 'a')
+			
+	for i in os_list:
+
+		f.write(ip_table[cnt]+" ")
+		f.write(i+"\n")
+		cnt += 1
+
+	f.close()
+
+
   

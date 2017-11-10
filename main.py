@@ -39,6 +39,12 @@ while True:
 				icmp.open_port_identification()
 			except Exception as e:
 				print(e)
+		elif x == '4':
+			try:
+				utilities.validate()
+				icmp.os_ident()
+			except Exception as e:
+				print(e)
 		elif x == "--help":
 			inp = input("[*] Type the function name you'd like to see Instructions.\n Use --help man for Detailed Explanation.\
 				> ")
