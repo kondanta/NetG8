@@ -2,6 +2,7 @@ from scapy.all import *
 from src.utils import get_nmap
 import os
 import re
+import nmap
 
 
 conf.L3socket = L3RawSocket
@@ -41,114 +42,65 @@ def port_identification():
 	For ip's icmp.dat file is required.
 	"""
 	lst = list()
-	ip_list = list()
-	port_list = list()
+	nm = nmap.PortScanner()
 
 	for ips in open("icmp.dat", "r").readlines():
 		lst.append(ips.strip())
 
 	for ip in lst:
-		try:
-			scan_result = get_nmap(ip, "-d -d ")
-			scan_result = scan_result.replace("\n", "")
-
-			prt = re.compile(r'(?:.*Ports:\s)(.*)#.*')
-			ip_list = (prt.findall(scan_result))
-			print(ip_list)
-			# if regex returns nothing, We have no ports available/open.
-			if not ip_list:
-				ip_list = ["None"]
-
-			for item in ip_list:
-				item = item.replace('/'," ")
-				port_list.append(item)
-
-			for index, item in enumerate(port_list):
-				port_list[index] = item
-
-		except Exception as e:
-			print("Port Managing Error: %s" % e)
-			pass
-		
-	try:
-		"""
-		It will write the ports.dat file as follows:
-		Host's Ip address, Port number, Port Status[open, restricted], type[tcp/udp], service-name
-		"""
-		# FIXME: It doesnt write the IPs that has no OpenPorts.
-		f = open('ports.dat', 'a')
+		a = nm.scan(ip, arguments="-d -d")
+		b = (a['scan'][ip]['tcp'])
 		cnt = 0
-		
-		for i in port_list:
-			f.write(lst[cnt]+", ")
-			# for j in i:
-			f.write(i) 
-			cnt += 1
-			f.write('\n')
 
+		for key, values in b.items():
+			x = "Port Number: %s, State: %s, Reason: %s, Service-name: %s. " %\
+			(key, values['state'], values['reason'], values['name'])
+			
+			f = open('ports.dat', 'a')
+
+			# Adding ip addreses in front of the ports.
+			if cnt < len(lst):
+				f.write(ip+", ")
+			f.write(x)
+			cnt += 1
+
+		f.write('\n')
 		f.close()
-		print("[*] Ports.dat is created!\n")
-	except Exception as e:
-		print("File Writing Error: %s " % e)
 
 
 def open_port_identification():
+	"""
+	Find the open ports of the ip addresses in ports.dat file.
+	"""
 	lst = list()
-	ip_list = list()
 	ip_table = list()
-	port_list = list()
+	nm = nmap.PortScanner()
 
-	for ips in open("ports.dat", "r").readlines():
+	for ips in open("open_ports.dat", "r").readlines():
 		lst.append(ips.strip())
-
+ 	
+ 	# Separating the ips.
 	for item in lst:
 		item = item.split(",")
-		ip_list.append(item[0])
 		ip_table.append(item[0])
 
-	print(ip_list)
-	for ip in ip_list:
-		try:
-			scan_result = get_nmap(ip)
-			scan_result = scan_result.replace("\n", "")
+	# since nmap library's outputs similar to the json format
+	# I couldnt find a good way to implement but using 2 loops.
+	for ip in ip_table:
+		a = nm.scan(ip)
+		b = (a['scan'][ip]['tcp'])
+		cnt = 0
 
-			prt = re.compile(r'(?:.*Ports:\s)(.*)(?:\S\t)(?:Ignored.*)')
-			ip_list = (prt.findall(scan_result))
-			# if regex returns nothing, We have no ports available/open.
-			if not ip_list:
-				ip_list = ["None"]
+		for key, values in b.items():
+			x = "Port Number: %s, State: %s, Reason: %s, Service-name: %s, Product: %s." %\
+			(key, values['state'], values['reason'], values['name'], values['product'])
+			f = open('open_ports.dat', 'a')
 
-			for item in ip_list:
-				item = item.replace('/'," ")
-				port_list.append(item)
-
-			for index, item in enumerate(port_list):
-				port_list[index] = item
-
-		except Exception as e:
-			print("Port Managing Error: %s" % e)
-			pass
-	try:
-		"""
-		It will write the ports.dat file as follows:
-		Host's Ip address, Port number, Port Status[open, restricted], type[tcp/udp], service-name
-		"""
-		# FIXME: It doesnt write the IPs that has no OpenPorts.
-		f = open('open_ports.dat', 'a')
-		ctr = 0
-		print(port_list)
-		for i in port_list:
-			if i == "None":
-				continue
-			else:
-				f.write(ip_table[ctr]+" ,")
-				f.write(i) 
-				ctr += 1
-			f.write('\n')
-
+			# adding ip addresses infront of the ports.
+			if cnt < len(lst):
+				f.write(ip+", ")
+			f.write(x)
+			cnt += 1
+		f.write('\n')
 		f.close()
-		print("[*] OpenPorts.dat is created!\n")
-	except Exception as e:
-		print("File Writing Error: %s " % e)
-
   
