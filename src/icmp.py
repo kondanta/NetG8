@@ -1,15 +1,15 @@
-from scapy.all import *
-from src.utils import get_nmap
 import os
-import re
-import nmap
-
+import sys
+try:
+	import nmap
+	from scapy.all import *
+except ModuleNotFoundError:
+    print('Required modules are not found. Please check the ReadMe file for requirements.')
+    sys.exit(0)
 
 conf.L3socket = L3RawSocket
 TIMEOUT = 2
 conf.verb = 0
-
-
 
 def icmp_ping(ip1='192.168.1.1', ip2='192.168.1.255'):
 	"""
@@ -138,7 +138,7 @@ def os_ident():
 	except IndexError:
 		print("Couldn't able to find the OS. Please check the open ports and ips.")
 
-	f = open('denfin.dat', 'a')
+	f = open('os_ident.dat', 'a')
 			
 	for i in os_list:
 

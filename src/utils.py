@@ -13,6 +13,12 @@ def get_nmap(ip, option=''):
 	process = os.popen(command)
 	return str(process.read())
 
+def get_neigh(option=''):
+	# default nmap scan for open ports!
+	command = "ip " + "neigh " + option
+	process = os.popen(command)
+	return str(process.read())
+
 
 def validate(name='icmp.dat'):
 	"""
