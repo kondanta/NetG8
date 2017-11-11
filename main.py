@@ -4,6 +4,7 @@ if sys.version_info[0] < 3:
 import src.icmp as icmp
 import src.utils as utilities
 from src.webserver import web_server as webserver
+import src.snmp as snmp
 
 menu = """
 Menu:
@@ -12,6 +13,7 @@ Menu:
 3-) OPEN PORT SCAN
 4-) OS IDENTIFICATION
 6-) WEB SERVER DETECTION
+7-) SNMP DETECTION
 Q-) Exit
 """
 
@@ -57,6 +59,12 @@ while True:
 				if not inp:
 					webserver()
 				webserver(inp)
+			except Exception as e:
+				print(e)
+
+		elif x == '7':
+			try:
+				snmp.snmp_port()
 			except Exception as e:
 				print(e)
 
