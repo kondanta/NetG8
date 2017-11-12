@@ -1,5 +1,8 @@
 from scapy.all import *
 import os
+import subprocess as sub
+
+
 """
 This file contains utility functions of the program that needs externally.
 """
@@ -18,6 +21,13 @@ def get_neigh(option=''):
 	command = "ip " + "neigh " + option
 	process = os.popen(command)
 	return str(process.read())
+
+
+def get_tcpdump(srcip):
+	srctrack = "src host %s" % (srcip)
+	p = sub.Popen(('sudo', 'tcpdump', '-l','-n', srctrack, '-vv'), stdout=sub.PIPE)
+	for row in iter(p.stdout.readline, b''):
+		print(row.rstrip())
 
 
 def validate(name='icmp.dat'):
