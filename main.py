@@ -72,7 +72,7 @@ while True:
 
 		elif x == '10':
 			try:
-				sniff.sniff()
+				sniff.sniffer()
 			except Exception as e:
 				print(e)
 
