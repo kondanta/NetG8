@@ -5,15 +5,17 @@ import src.icmp as icmp
 import src.utils as utilities
 from src.webserver import web_server as webserver
 import src.snmp as snmp
+import src.sniff as sniff
 
 menu = """
 Menu:
-1-) PING
+1-) ICMP PING
 2-) PORT SCAN
 3-) OPEN PORT SCAN
 4-) OS IDENTIFICATION
 6-) WEB SERVER DETECTION
 7-) SNMP DETECTION
+10-) SNIFF
 Q-) Exit
 """
 
@@ -65,6 +67,12 @@ while True:
 		elif x == '7':
 			try:
 				snmp.snmp_port()
+			except Exception as e:
+				print(e)
+
+		elif x == '10':
+			try:
+				sniff.sniff()
 			except Exception as e:
 				print(e)
 

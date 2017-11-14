@@ -1,7 +1,7 @@
 import nmap
 import os
 import re
-import utils as utilities
+from . import utils as utilities
 
 def snmp_port():
     lst = list()

