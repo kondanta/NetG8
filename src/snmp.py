@@ -28,4 +28,4 @@ def snmp_port():
                 f.write(x+"\n")
             f.close()
         else:
-            print("There is no open SNMP port in scanned IP:{}".format(ip))
+            print("There is no open SNMP port for scanned IP:{}".format(ip))
