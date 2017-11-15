@@ -6,6 +6,7 @@ import src.utils as utilities
 from src.webserver import web_server as webserver
 import src.snmp as snmp
 import src.sniff as sniff
+import src.show as show
 
 menu = """
 Menu:
@@ -15,6 +16,7 @@ Menu:
 4-) OS IDENTIFICATION
 6-) WEB SERVER DETECTION
 7-) SNMP DETECTION
+9-) SHOW FILES
 10-) SNIFF
 Q-) Exit
 """
@@ -70,9 +72,15 @@ while True:
 			except Exception as e:
 				print(e)
 
+		elif x == '9':
+			try:
+				show.show()
+			except Exception as e:
+				print(e)
+
 		elif x == '10':
 			try:
-				sniff.snif()
+				sniff.sniffer()
 			except Exception as e:
 				print(e)
 

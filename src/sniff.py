@@ -7,7 +7,7 @@ def dtl_callback(pkt):
     pkt.show()
 
 def srdst_callback(pkt):
-    print("Source: {}:{} --> Destination: {}:{}".format(pkt[IP].src, pkt[IP].dst))
+        print("Source: {} --> Destination: {}".format(pkt[IP].src, pkt[IP].dst))
 
 def srdstport_callback(pkt):
     print("Source: {}:{} --> Destination: {}:{}".format(pkt[IP].src, pkt[IP].sport, pkt[IP].dst, pkt[IP].dport))
@@ -32,7 +32,7 @@ Menu:
 Q-) Exit
 """
 
-def snif():
+def sniffer():
     while True:
         try:
             print(menu)
@@ -45,10 +45,10 @@ def snif():
                 sniff(prn=dtl_callback, store=0)
 
             elif x == '3':
-                sniff(prn=srdst_callback, store=0)
+                sniff(filter="ip", prn=srdst_callback, store=0)
 
             elif x == '4':
-                sniff(prn=srdstport_callback, store=0)
+                sniff(filter="ip", prn=srdstport_callback, store=0)
 
             elif x == '5':
                 sniff(filter="tcp", prn=sdindex_callback, store=0)
