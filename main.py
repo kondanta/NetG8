@@ -5,7 +5,7 @@ if sys.version_info[0] < 3:
 	raise SystemError("Please run this program with Python 3!")
 import src.icmp as icmp
 import src.utils as utilities
-from src.webserver import web_server as webserver
+import src.webserver as webserver
 import src.snmp as snmp
 import src.sniff as sniff
 import src.show as show
@@ -43,7 +43,7 @@ while True:
 				utilities.validate()
 				icmp.port_identification()
 			except FileNotFoundError:
-				print("no icmp.dat file")
+				print("No icmp.dat file.")
 				icmp.icmp_ping()
 				icmp.port_identification()
 
@@ -65,8 +65,8 @@ while True:
 			try:
 				inp = input('Please specify the usage of the Web server Detection.')
 				if not inp:
-					webserver()
-				webserver(inp)
+					webserver.webserver()
+				webserver.webserver(inp)
 			except Exception as e:
 				print(e)
 
@@ -95,15 +95,13 @@ while True:
 				print(e)
 
 		elif x == "--help":
-			inp = input("[*] Type the function name you'd like to see Instructions.\n Use --help man for Detailed Explanation.\
-				> ")
+			utilities.help_menu()
 
-			utilities.help_menu(str.upper(inp))
 		elif x == str.lower('Q'):
 			sys.exit(1)
 
 		else:
-			print("[*] Wrong Usage. Please --help to See Detailed Explanation of Functions")
+			print("[*] Wrong Usage. Please --help to see detailed explanation of functions")
 	except KeyboardInterrupt:
 		print("!!! User requested exit operation.")
 		sys.exit(1)

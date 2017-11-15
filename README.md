@@ -1,11 +1,11 @@
-#CE 340 Cryptography & Network Security Assignment 3
+# CE 340 Cryptography & Network Security Assignment 3
 
-##Title: Building Simple Tools
-##Defined by: Süleyman Kondakcı (Instructor) , http://homes.ieu.edu.tr/~skondakci/ 
-##Date to delivery: 15.11.2017, 17:00
-##Project members: Taylan Doğan, Ünal Muslu
+## Title: Building Simple Tools
+## Defined by: Süleyman Kondakcı (Instructor) , http://homes.ieu.edu.tr/~skondakci/ 
+## Date to delivery: 15.11.2017, 17:00
+## Project members: Taylan Doğan, Ünal Muslu
 
-###Dependencies
+### Dependencies
 Python Dependencies:
 	- Python 3+
 	- nmap
@@ -20,12 +20,12 @@ dependencies with pip:
 Installing with easy_install:
 	- ```easy_install modul-name```
 
-###Run Time
+### Run Time
 Program does require a root user to be run successfully. If user is not root some of the functionalities may not
 work how they supposed to.
 Running the program with super user privlege, simply type `sudo` in front of the `python main.py`.
 
-###Functionalities
+### Functionalities
 You expected to select functionalities from the given menu.
 
 - ICMP Ping:
