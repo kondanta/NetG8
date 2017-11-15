@@ -12,20 +12,20 @@ def router_detection():
     nm = nmap.PortScanner()
 
     a = utilities.get_neigh()
-    print(a)
     b = re.compile(r"(.*)(?: dev.*)")
     c = (b.findall(a))
-    print(c)
 
     for ip in c:
         a = nm.scan(ip, arguments="-d -d")
         if nm[ip]['tcp'][179]['state'] == "open": # bgp
             f = open('wall.dat', 'a')
-	      	x = "I found Router: %s" %(ip)
-	      	f.write(x)
+            x = "I found Router: %s" %(ip)
+            f.write(x)
             f.close()
         elif nm[ip]['tcp'][2042]['state'] == "open":
-        	f = open('wall.dat', 'a')
-	      	x = "I found Router: %s" %(ip)
-	      	f.write(x)
+            f = open('wall.dat', 'a')
+            x = "I found Router: %s" %(ip)
+            f.write(x)
             f.close()
+        else:
+            print("I cant find open ports for the router.")

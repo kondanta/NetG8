@@ -10,6 +10,7 @@ import src.snmp as snmp
 import src.sniff as sniff
 import src.show as show
 import src.synattack as synattack
+import src.router as router
 
 menu = """
 Menu:
@@ -17,6 +18,7 @@ Menu:
 2-) PORT SCAN
 3-) OPEN PORT SCAN
 4-) OS IDENTIFICATION
+5-) Router/Fw scan
 6-) WEB SERVER DETECTION
 7-) SNMP DETECTION
 8-) SYN FLOOD ATTACK
@@ -58,6 +60,12 @@ while True:
 			try:
 				utilities.validate()
 				icmp.os_ident()
+			except Exception as e:
+				print(e)
+
+		elif x == '5':
+			try:
+				router.router_detection()
 			except Exception as e:
 				print(e)
 

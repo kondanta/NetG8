@@ -11,7 +11,6 @@ TIMEOUT = 2
 conf.verb = 0
 
 def get_neigh(option=''):
-	# default nmap scan for open ports!
 	command = "ip " + "neigh " + option
 	process = os.popen(command)
 	return str(process.read())
