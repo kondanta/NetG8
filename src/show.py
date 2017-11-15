@@ -68,14 +68,14 @@ def show():
                 input("Press any key to continue.")
 
             elif x == str.lower('Q'):
-                sys.exit(1)
+                return
 
             else:
                 print("[*] Invalid option.")
 
         except KeyboardInterrupt:
             print("!!! User requested exit operation.")
-            sys.exit(1)
+            return
         except FileNotFoundError:
             print("File is not found. Please run the function first.")
-            sys.exit(1)
+            return

@@ -30,7 +30,7 @@ def icmp_ping(ip1='192.168.1.1', ip2='192.168.1.255'):
 				x = reply.src + " is online"
 				print(x)
 			else:
-				x = "Timeout waiting for %s" % packet[IP].dst
+				x = "%s is offline" % packet[IP].dst
 				print(x)
 	except OSError:
 		print("Check the given ips")
@@ -50,24 +50,13 @@ def port_identification():
 	for ip in lst:
 		a = nm.scan(ip, arguments="-sT -d -d")
 		b = (a['scan'][ip]['tcp'])
-		# c = (a['scan'][ip]['udp'])
-
-		cnt = 0
 
 		f = open('ports.dat', 'a')
 		f.write(ip+", ")
 		for key, values in b.items():
 			x = "Protocol: TCP, Port Number: %s, State: %s, Reason: %s, Service-name: %s. " %\
 			(key, values['state'], values['reason'], values['name'])
-			
-			# f = open('ports.dat', 'a')
-
-			# Adding ip addreses in front of the ports.
-			# if cnt < len(lst):
-				# f.write(ip+", ")
-
 			f.write(x)
-			cnt += 1
 
 		a = nm.scan(ip, arguments="-sU -d -d")
 		c = (a['scan'][ip]['udp'])
@@ -75,14 +64,7 @@ def port_identification():
 		for key, values in c.items():
 			x = "Protocol: UDP, Port Number: %s, State: %s, Reason: %s, Service-name: %s. " %\
 			(key, values['state'], values['reason'], values['name'])
-			
-			# f = open('ports.dat', 'a')
-
-			# Adding ip addreses in front of the ports.
-			# if cnt < len(lst):
-				# f.write(ip+", ")
 			f.write(x)
-			# cnt += 1
 
 		f.write('\n')
 		f.close()
@@ -119,7 +101,7 @@ def open_port_identification():
 			if cnt < len(lst):
 				f.write(ip+", ")
 			f.write(x)
-			cnt += 1
+
 		f.write('\n')
 		f.close()
 

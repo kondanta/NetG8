@@ -1,3 +1,5 @@
+import logging
+logging.getLogger("scapy.runtime").setLevel(logging.ERROR) # Surpress the scapy warning msg of ipv6. 
 import sys
 if sys.version_info[0] < 3:
 	raise SystemError("Please run this program with Python 3!")
@@ -7,6 +9,7 @@ from src.webserver import web_server as webserver
 import src.snmp as snmp
 import src.sniff as sniff
 import src.show as show
+import src.synattack as synattack
 
 menu = """
 Menu:
@@ -16,6 +19,7 @@ Menu:
 4-) OS IDENTIFICATION
 6-) WEB SERVER DETECTION
 7-) SNMP DETECTION
+8-) SYN FLOOD ATTACK
 9-) SHOW FILES
 10-) SNIFF
 Q-) Exit
@@ -69,6 +73,12 @@ while True:
 		elif x == '7':
 			try:
 				snmp.snmp_port()
+			except Exception as e:
+				print(e)
+
+		elif x == '8':
+			try:
+				synattack.syn_attack()
 			except Exception as e:
 				print(e)
 

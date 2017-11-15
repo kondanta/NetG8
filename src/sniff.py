@@ -64,6 +64,6 @@ def sniffer():
                 
         except KeyboardInterrupt:
             print("!!! User requested exit operation.")
-            sys.exit(1)
+            return
 
 
