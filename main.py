@@ -5,11 +5,12 @@ if sys.version_info[0] < 3:
 	raise SystemError("Please run this program with Python 3!")
 import src.icmp as icmp
 import src.utils as utilities
-from src.webserver import web_server as webserver
+import src.webserver as webserver
 import src.snmp as snmp
 import src.sniff as sniff
 import src.show as show
 import src.synattack as synattack
+import src.router as router
 
 menu = """
 Menu:
@@ -17,6 +18,7 @@ Menu:
 2-) PORT SCAN
 3-) OPEN PORT SCAN
 4-) OS IDENTIFICATION
+5-) Router/Fw scan
 6-) WEB SERVER DETECTION
 7-) SNMP DETECTION
 8-) SYN FLOOD ATTACK
@@ -43,7 +45,7 @@ while True:
 				utilities.validate()
 				icmp.port_identification()
 			except FileNotFoundError:
-				print("no icmp.dat file")
+				print("No icmp.dat file.")
 				icmp.icmp_ping()
 				icmp.port_identification()
 
@@ -61,12 +63,18 @@ while True:
 			except Exception as e:
 				print(e)
 
+		elif x == '5':
+			try:
+				router.router_detection()
+			except Exception as e:
+				print(e)
+
 		elif x == '6':
 			try:
 				inp = input('Please specify the usage of the Web server Detection.')
 				if not inp:
-					webserver()
-				webserver(inp)
+					webserver.web_server()
+				webserver.web_server(inp)
 			except Exception as e:
 				print(e)
 
@@ -95,15 +103,13 @@ while True:
 				print(e)
 
 		elif x == "--help":
-			inp = input("[*] Type the function name you'd like to see Instructions.\n Use --help man for Detailed Explanation.\
-				> ")
+			utilities.help_menu()
 
-			utilities.help_menu(str.upper(inp))
 		elif x == str.lower('Q'):
 			sys.exit(1)
 
 		else:
-			print("[*] Wrong Usage. Please --help to See Detailed Explanation of Functions")
+			print("[*] Wrong Usage. Please --help to see detailed explanation of functions")
 	except KeyboardInterrupt:
 		print("!!! User requested exit operation.")
 		sys.exit(1)

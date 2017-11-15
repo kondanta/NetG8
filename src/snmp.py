@@ -13,18 +13,18 @@ def snmp_port():
     a = utilities.get_neigh()
     b = re.compile(r"(.*)(?: dev.*)")
     c = (b.findall(a))
-
+    
     for ip in c:
-        a = nm.scan(ip, arguments="-d -d")
+        scan = nm.scan(ip, arguments="-d -d")
         if nm[ip]['tcp'][22]['state'] == "open":
-            b = (a['scan'][ip]['tcp'])
+            res = (scan['scan'][ip]['tcp'])
             f = open('snmp.dat', 'a')
             f.write(ip+":\n")
-            for key, values in b.items():
+            for key, values in res.items():
                 x = "Port Number: %s, State: %s, Reason: %s, Service-name: %s. " %\
                 (key, values['state'], values['reason'], values['name'])
                 f.write(x+"\n")
             f.close()
         else:
-            print("No open port for SNMP")
-            return
+            print("There is no open SNMP port in scanned IP:{}".format(ip))
+
