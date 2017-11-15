@@ -65,8 +65,8 @@ while True:
 			try:
 				inp = input('Please specify the usage of the Web server Detection.')
 				if not inp:
-					webserver.webserver()
-				webserver.webserver(inp)
+					webserver.web_server()
+				webserver.web_server(inp)
 			except Exception as e:
 				print(e)
 
