@@ -53,15 +53,17 @@ def port_identification():
 
 		f = open('ports.dat', 'a')
 		f.write(ip+", ")
+
 		for key, values in b.items():
+			print(key)
 			x = "Protocol: TCP, Port Number: %s, State: %s, Reason: %s, Service-name: %s. " %\
 			(key, values['state'], values['reason'], values['name'])
 			f.write(x)
 
-		a = nm.scan(ip, arguments="-sU -d -d")
-		c = (a['scan'][ip]['udp'])
-
-		for key, values in c.items():
+		c = nm.scan(ip, arguments="-sU -d -d")
+		d = (c['scan'][ip]['udp'])
+		for key, values in d.items():
+			print(key)
 			x = "Protocol: UDP, Port Number: %s, State: %s, Reason: %s, Service-name: %s. " %\
 			(key, values['state'], values['reason'], values['name'])
 			f.write(x)

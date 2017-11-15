@@ -11,10 +11,8 @@ def snmp_port():
     nm = nmap.PortScanner()
 
     a = utilities.get_neigh()
-    print(a)
     b = re.compile(r"(.*)(?: dev.*)")
     c = (b.findall(a))
-    print(c)
 
     for ip in c:
         a = nm.scan(ip, arguments="-d -d")
@@ -27,3 +25,6 @@ def snmp_port():
                 (key, values['state'], values['reason'], values['name'])
                 f.write(x+"\n")
             f.close()
+        else:
+            print("No open port for SNMP")
+            return

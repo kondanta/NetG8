@@ -67,3 +67,31 @@ You expected to select functionalities from the given menu.
 			Function will write only open ports to `web.dat`
 	- If user does not give any parameters, function will write only open ports into the file.
 
+- Router and Firewall Detection:
+	- This function does not need a user input.
+	- It automatically finds the nearest hosts and scans them. If any of them has open router port such as BGP
+	or IS IS, write them into the `wall.dat` file.
+
+- SNMP Detection:
+	- This function does not need any user input.
+	- It automatically finds the connected hosts on internet and scans their SNMP ports. If any of the hosts
+	has open SNMP ports, this function writes these IP addresses down to the `snmp.dat`
+
+- SYN Flood Attack:
+	- This function takes arguments from user:
+		- First Ip for start sending the attack
+		- Second Ip for start sending the attack
+		- The Ip address of the victim.
+		- Finally the flood size
+	- It'll start a tcpdump session with the parameter of dst host, so that user can track the attacking.
+	- `Warning!` Please be sure that you have installed tcpdump correctly.
+
+- Show:
+	- Prints the content of the all `.dat` files.
+
+
+- Sniff:
+	- User can choose the actions from a menu.
+	- It'll sniff the network and print buffer to the terminal.
+
+
