@@ -32,7 +32,7 @@ Menu:
 Q-) Exit
 """
 
-def sniff():
+def snif():
     while True:
         try:
             print(menu)

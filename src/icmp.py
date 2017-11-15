@@ -48,25 +48,44 @@ def port_identification():
 		lst.append(ips.strip())
 
 	for ip in lst:
-		a = nm.scan(ip, arguments="-d -d")
+		a = nm.scan(ip, arguments="-sT -d -d")
 		b = (a['scan'][ip]['tcp'])
+		# c = (a['scan'][ip]['udp'])
+
 		cnt = 0
 
+		f = open('ports.dat', 'a')
+		f.write(ip+", ")
 		for key, values in b.items():
-			x = "Port Number: %s, State: %s, Reason: %s, Service-name: %s. " %\
+			x = "Protocol: TCP, Port Number: %s, State: %s, Reason: %s, Service-name: %s. " %\
 			(key, values['state'], values['reason'], values['name'])
 			
-			f = open('ports.dat', 'a')
+			# f = open('ports.dat', 'a')
 
 			# Adding ip addreses in front of the ports.
-			if cnt < len(lst):
-				f.write(ip+", ")
+			# if cnt < len(lst):
+				# f.write(ip+", ")
+
 			f.write(x)
 			cnt += 1
 
+		a = nm.scan(ip, arguments="-sU -d -d")
+		c = (a['scan'][ip]['udp'])
+
+		for key, values in c.items():
+			x = "Protocol: UDP, Port Number: %s, State: %s, Reason: %s, Service-name: %s. " %\
+			(key, values['state'], values['reason'], values['name'])
+			
+			# f = open('ports.dat', 'a')
+
+			# Adding ip addreses in front of the ports.
+			# if cnt < len(lst):
+				# f.write(ip+", ")
+			f.write(x)
+			# cnt += 1
+
 		f.write('\n')
 		f.close()
-
 
 def open_port_identification():
 	"""
