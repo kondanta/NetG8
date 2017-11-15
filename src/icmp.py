@@ -92,21 +92,21 @@ def open_port_identification():
 	for ip in ip_table:
 		a = nm.scan(ip)
 		b = (a['scan'][ip]['tcp'])
-		c = (a['scan'][ip]['udp'])
+		cnt = 0
 
-		f = open('open_ports.dat', 'a')
 		for key, values in b.items():
 			x = "Port Number: %s, State: %s, Reason: %s, Service-name: %s, Product: %s." %\
 			(key, values['state'], values['reason'], values['name'], values['product'])
+			f = open('open_ports.dat', 'a')
+
+			# adding ip addresses infront of the ports.
+			if cnt < len(lst):
+				f.write(ip+", ")
 			f.write(x)
-			f.write('\n')
-		for key, values in c.items():
-			y = "Protocol: UDP, Port Number: %s, State: %s, Reason: %s, Service-name: %s. " %\
-			(key, values['state'], values['reason'], values['name'])
-			f.write(y)
-			
+			cnt += 1
 		f.write('\n')
 		f.close()
+
 
 def os_ident():
 
