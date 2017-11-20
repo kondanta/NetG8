@@ -26,9 +26,5 @@ def snmp_port():
                 f.write(x+"\n")
             f.close()
         else:
-<<<<<<< HEAD
             print("There is no open SNMP port in scanned IP:{}".format(ip))
 
-=======
-            print("There is no open SNMP port for scanned IP:{}".format(ip))
->>>>>>> b1e54eb2fce4b2c956e6bbd781f353e3a45ff300
