@@ -1,6 +1,9 @@
 ### Network Scanner
+It's a simple network scanner that scans network, finds open ports throught this ports find the Operating systems
+of the found ips. Also do Syn flood attack as well as the network sniff. It's actually a tool that merges some
+good features from different tools available.
 
-
+### Dependencies 
 So let me briefly explain the dependencies. It requires nmap and scapy installed through python package manager.
 `pip install > requirements.txt`
 Also one function requires unix operating system for run.
