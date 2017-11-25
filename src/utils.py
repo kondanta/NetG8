@@ -53,4 +53,14 @@ def validate(name='icmp.dat'):
 	f.close()
 
 def help_menu():
-	print("Please check out the ReadMe for help.")
+	print("icmp ping: Scans live ips provided\n" + "\
+			port, and open port scans: They'll search the ports of the found ips\n\
+			os router identification: Find routers in local network and find the operating systems\
+			that which ip adress runs which OS.\n\
+			!!These functions depends eachothers outputs!\n\
+			Syn Flood Attack: Basically do dos attack to given ip. Usage: Needs an Ip address\n\
+			Snmp detection: Scans the snmp port of nearest connected machines on the network\n\
+			Web server detection: scans the web address' ports. Has two mods:\
+			open= Only prints the open ports, all= Prints both closed and open ports. Usage:\
+			Needs a web site => http://www.google.com\n\
+			Sniff: Sniffing the local network. Has several self-explanatory options.\n")

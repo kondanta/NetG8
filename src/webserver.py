@@ -2,9 +2,9 @@ import nmap
 
 def web_server(option='open'):
 	# Predefined web-servers.
-	host = ['www.eksisozluk.com', 'www.myanimelist.net', 'www.google.com.tr', 'www.yahoo.com.tr',
-			'www.github.com', 'www.hotmail.com', 'www.twitter.com', 'www.facebok.com', 'www.devrant.com',
-			'www.pearson.com']
+	inp = input("Enter a url > ")
+	host = list()
+	host.append(inp)
 	nm = nmap.PortScanner()
 	
 	try:

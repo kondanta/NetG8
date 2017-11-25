@@ -108,49 +108,53 @@ def open_port_identification():
 		f.close()
 
 
+import sys
 def os_ident():
+	if sys.platform == 'win32':
+		print('This function does not work on windows')
+		return
+	else:
+		lst = list()
+		ip_table = list()
+		os_list = list()
 
-	lst = list()
-	ip_table = list()
-	os_list = list()
+		nm = nmap.PortScanner()
+		cnt = 0
 
-	nm = nmap.PortScanner()
-	cnt = 0
+		for ips in open("open_ports.dat", "r").readlines():
+			lst.append(ips.strip())
 
-	for ips in open("open_ports.dat", "r").readlines():
-		lst.append(ips.strip())
+		for item in lst:
+			item = item.split(",")
+			ip_table.append(item[0])
 
-	for item in lst:
-		item = item.split(",")
-		ip_table.append(item[0])
+		print(ip_table)
 
-	print(ip_table)
+		try:
 
-	try:
+			for ip in ip_table:
 
-		for ip in ip_table:
+				nm.scan(ip, arguments="-O")
 
-			nm.scan(ip, arguments="-O")
+				a = nm[ip]['osmatch']
+				b = a[0]['name']
+				print(b)
+				os_list.append(b)
 
-			a = nm[ip]['osmatch']
-			b = a[0]['name']
-			print(b)
-			os_list.append(b)
+			print(os_list)
 
-		print(os_list)
+		except IndexError:
+			print("Couldn't able to find the OS. Please check the open ports and ips.")
 
-	except IndexError:
-		print("Couldn't able to find the OS. Please check the open ports and ips.")
+		f = open('os_ident.dat', 'a')
+				
+		for i in os_list:
 
-	f = open('os_ident.dat', 'a')
-			
-	for i in os_list:
+			f.write(ip_table[cnt]+" ")
+			f.write(i+"\n")
+			cnt += 1
 
-		f.write(ip_table[cnt]+" ")
-		f.write(i+"\n")
-		cnt += 1
-
-	f.close()
+		f.close()
 
 
   
