@@ -46,30 +46,33 @@ def port_identification():
 
 	for ips in open("icmp.dat", "r").readlines():
 		lst.append(ips.strip())
+	try:
+		for ip in lst:
+			a = nm.scan(ip, arguments="-sT -d -d")
+			b = (a['scan'][ip]['tcp'])
 
-	for ip in lst:
-		a = nm.scan(ip, arguments="-sT -d -d")
-		b = (a['scan'][ip]['tcp'])
+			f = open('ports.dat', 'a')
+			f.write(ip+", ")
 
-		f = open('ports.dat', 'a')
-		f.write(ip+", ")
+			for key, values in b.items():
+				print(key)
+				x = "Protocol: TCP, Port Number: %s, State: %s, Reason: %s, Service-name: %s. " %\
+				(key, values['state'], values['reason'], values['name'])
+				f.write(x)
 
-		for key, values in b.items():
-			print(key)
-			x = "Protocol: TCP, Port Number: %s, State: %s, Reason: %s, Service-name: %s. " %\
-			(key, values['state'], values['reason'], values['name'])
-			f.write(x)
+			c = nm.scan(ip, arguments="-sU -d -d")
+			d = (c['scan'][ip]['udp'])
+			for key, values in d.items():
+				print(key)
+				x = "Protocol: UDP, Port Number: %s, State: %s, Reason: %s, Service-name: %s. " %\
+				(key, values['state'], values['reason'], values['name'])
+				f.write(x)
 
-		c = nm.scan(ip, arguments="-sU -d -d")
-		d = (c['scan'][ip]['udp'])
-		for key, values in d.items():
-			print(key)
-			x = "Protocol: UDP, Port Number: %s, State: %s, Reason: %s, Service-name: %s. " %\
-			(key, values['state'], values['reason'], values['name'])
-			f.write(x)
-
-		f.write('\n')
-		f.close()
+			f.write('\n')
+			f.close()
+	except KeyError:
+		print('Network Error!')
+		pass
 
 def open_port_identification():
 	"""
@@ -89,23 +92,23 @@ def open_port_identification():
 
 	# since nmap library's outputs similar to the json format
 	# I couldnt find a good way to implement but using 2 loops.
-	for ip in ip_table:
-		a = nm.scan(ip)
-		b = (a['scan'][ip]['tcp'])
-		cnt = 0
-
-		for key, values in b.items():
-			x = "Port Number: %s, State: %s, Reason: %s, Service-name: %s, Product: %s." %\
-			(key, values['state'], values['reason'], values['name'], values['product'])
+	try:
+		for ip in ip_table:
+			a = nm.scan(ip)
+			b = (a['scan'][ip]['tcp'])
+			print(a)
 			f = open('open_ports.dat', 'a')
-
-			# adding ip addresses infront of the ports.
-			if cnt < len(lst):
-				f.write(ip+", ")
-			f.write(x)
-			cnt += 1
-		f.write('\n')
-		f.close()
+			f.write(ip+", ")
+			for key, values in b.items():
+				x = "Port Number: %s, State: %s, Reason: %s, Service-name: %s, Product: %s." %\
+				(key, values['state'], values['reason'], values['name'], values['product'])
+				
+				f.write(x)
+			f.write('\n')
+			f.close()
+	except KeyError:
+		print("Could not find any ports to scan. Please be sure that your network allows scanning")
+		pass
 
 
 import sys
