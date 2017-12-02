@@ -16,7 +16,7 @@ def snmp_port():
     
     for ip in c:
         scan = nm.scan(ip, arguments="-d -d")
-        if nm[ip]['tcp'][22]['state'] == "open":
+        if nm[ip]['tcp'][161]['state'] == "open":
             res = (scan['scan'][ip]['tcp'])
             f = open('snmp.dat', 'a')
             f.write(ip+":\n")
@@ -26,9 +26,5 @@ def snmp_port():
                 f.write(x+"\n")
             f.close()
         else:
-<<<<<<< HEAD
             print("There is no open SNMP port in scanned IP:{}".format(ip))
 
-=======
-            print("There is no open SNMP port for scanned IP:{}".format(ip))
->>>>>>> b1e54eb2fce4b2c956e6bbd781f353e3a45ff300

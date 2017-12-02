@@ -46,30 +46,33 @@ def port_identification():
 
 	for ips in open("icmp.dat", "r").readlines():
 		lst.append(ips.strip())
+	try:
+		for ip in lst:
+			a = nm.scan(ip, arguments="-sT -d -d")
+			b = (a['scan'][ip]['tcp'])
 
-	for ip in lst:
-		a = nm.scan(ip, arguments="-sT -d -d")
-		b = (a['scan'][ip]['tcp'])
+			f = open('ports.dat', 'a')
+			f.write(ip+", ")
 
-		f = open('ports.dat', 'a')
-		f.write(ip+", ")
+			for key, values in b.items():
+				print(key)
+				x = "Protocol: TCP, Port Number: %s, State: %s, Reason: %s, Service-name: %s. " %\
+				(key, values['state'], values['reason'], values['name'])
+				f.write(x)
 
-		for key, values in b.items():
-			print(key)
-			x = "Protocol: TCP, Port Number: %s, State: %s, Reason: %s, Service-name: %s. " %\
-			(key, values['state'], values['reason'], values['name'])
-			f.write(x)
+			c = nm.scan(ip, arguments="-sU -d -d")
+			d = (c['scan'][ip]['udp'])
+			for key, values in d.items():
+				print(key)
+				x = "Protocol: UDP, Port Number: %s, State: %s, Reason: %s, Service-name: %s. " %\
+				(key, values['state'], values['reason'], values['name'])
+				f.write(x)
 
-		c = nm.scan(ip, arguments="-sU -d -d")
-		d = (c['scan'][ip]['udp'])
-		for key, values in d.items():
-			print(key)
-			x = "Protocol: UDP, Port Number: %s, State: %s, Reason: %s, Service-name: %s. " %\
-			(key, values['state'], values['reason'], values['name'])
-			f.write(x)
-
-		f.write('\n')
-		f.close()
+			f.write('\n')
+			f.close()
+	except KeyError:
+		print('Network Error!')
+		pass
 
 def open_port_identification():
 	"""
@@ -89,68 +92,72 @@ def open_port_identification():
 
 	# since nmap library's outputs similar to the json format
 	# I couldnt find a good way to implement but using 2 loops.
-	for ip in ip_table:
-		a = nm.scan(ip)
-		b = (a['scan'][ip]['tcp'])
+	try:
+		for ip in ip_table:
+			a = nm.scan(ip)
+			b = (a['scan'][ip]['tcp'])
+			print(a)
+			f = open('open_ports.dat', 'a')
+			f.write(ip+", ")
+			for key, values in b.items():
+				x = "Port Number: %s, State: %s, Reason: %s, Service-name: %s, Product: %s." %\
+				(key, values['state'], values['reason'], values['name'], values['product'])
+				
+				f.write(x)
+			f.write('\n')
+			f.close()
+	except KeyError:
+		print("Could not find any ports to scan. Please be sure that your network allows scanning")
+		pass
+
+
+import sys
+def os_ident():
+	if sys.platform == 'win32':
+		print('This function does not work on windows')
+		return
+	else:
+		lst = list()
+		ip_table = list()
+		os_list = list()
+
+		nm = nmap.PortScanner()
 		cnt = 0
 
-		for key, values in b.items():
-			x = "Port Number: %s, State: %s, Reason: %s, Service-name: %s, Product: %s." %\
-			(key, values['state'], values['reason'], values['name'], values['product'])
-			f = open('open_ports.dat', 'a')
+		for ips in open("open_ports.dat", "r").readlines():
+			lst.append(ips.strip())
 
-			# adding ip addresses infront of the ports.
-			if cnt < len(lst):
-				f.write(ip+", ")
-			f.write(x)
+		for item in lst:
+			item = item.split(",")
+			ip_table.append(item[0])
+
+		print(ip_table)
+
+		try:
+
+			for ip in ip_table:
+
+				nm.scan(ip, arguments="-O")
+
+				a = nm[ip]['osmatch']
+				b = a[0]['name']
+				print(b)
+				os_list.append(b)
+
+			print(os_list)
+
+		except IndexError:
+			print("Couldn't able to find the OS. Please check the open ports and ips.")
+
+		f = open('os_ident.dat', 'a')
+				
+		for i in os_list:
+
+			f.write(ip_table[cnt]+" ")
+			f.write(i+"\n")
 			cnt += 1
-		f.write('\n')
+
 		f.close()
-
-
-def os_ident():
-
-	lst = list()
-	ip_table = list()
-	os_list = list()
-
-	nm = nmap.PortScanner()
-	cnt = 0
-
-	for ips in open("open_ports.dat", "r").readlines():
-		lst.append(ips.strip())
-
-	for item in lst:
-		item = item.split(",")
-		ip_table.append(item[0])
-
-	print(ip_table)
-
-	try:
-
-		for ip in ip_table:
-
-			nm.scan(ip, arguments="-O")
-
-			a = nm[ip]['osmatch']
-			b = a[0]['name']
-			print(b)
-			os_list.append(b)
-
-		print(os_list)
-
-	except IndexError:
-		print("Couldn't able to find the OS. Please check the open ports and ips.")
-
-	f = open('os_ident.dat', 'a')
-			
-	for i in os_list:
-
-		f.write(ip_table[cnt]+" ")
-		f.write(i+"\n")
-		cnt += 1
-
-	f.close()
 
 
   
