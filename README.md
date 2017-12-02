@@ -5,7 +5,7 @@ good features from different tools available.
 
 ### Dependencies 
 So let me briefly explain the dependencies. It requires nmap and scapy installed through python package manager.
-`pip install > requirements.txt`
+`pip install -r requirements.txt`
 Also one function requires unix operating system for run.
 
 ### Functions and Usages
